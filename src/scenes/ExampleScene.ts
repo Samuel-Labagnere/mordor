@@ -1,10 +1,14 @@
 import {
   Scene,
-  Mesh,
-  TorusKnotGeometry,
-  MeshStandardMaterial,
+  Points,
+  IcosahedronGeometry,
+  PointsMaterial,
+  TextureLoader,
+  RepeatWrapping,
+  AdditiveBlending,
   PointLight,
-  PerspectiveCamera
+  PerspectiveCamera,
+  type Texture
 } from 'three'
 
 import type {
@@ -12,6 +16,11 @@ import type {
   Clock,
   Lifecycle
 } from '~/core'
+
+import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
+import vertexShader from '~/shaders/blob-sphere.vert'
+import fragmentShader from '~/shaders/blob-sphere.frag'
+import noiseMapSrc from '~~/assets/textures/perlin-noise.png'
 
 export interface MainSceneParamaters {
   clock: Clock
@@ -23,7 +32,7 @@ export class ExampleScene extends Scene implements Lifecycle {
   public clock: Clock
   public camera: PerspectiveCamera
   public viewport: Viewport
-  public torusKnot: Mesh<TorusKnotGeometry, MeshStandardMaterial>
+  public mesh: Points<IcosahedronGeometry, CustomShaderMaterial>
   public light1: PointLight
   public light2: PointLight
   public light3: PointLight
@@ -39,11 +48,33 @@ export class ExampleScene extends Scene implements Lifecycle {
     this.camera = camera
     this.viewport = viewport
 
-    this.torusKnot = new Mesh(
-      new TorusKnotGeometry(1, 0.4, 200, 40, 2, 1),
-      new MeshStandardMaterial({
-        metalness: 1,
-        roughness: 0.4
+    this.mesh = new Points(
+      new IcosahedronGeometry(1.3, 64),
+      new CustomShaderMaterial({
+        baseMaterial: new PointsMaterial({
+          color: 0xffffff,
+          size: 0.02,
+          blending: AdditiveBlending
+        }),
+        vertexShader,
+        fragmentShader,
+        uniforms: {
+          radius: {
+            value: 1
+          },
+          noiseAmplitude: {
+            value: .75
+          },
+          noiseSpeed: {
+            value: 0.00003
+          },
+          time: {
+            value: 0
+          },
+          noiseMap: {
+            value: null
+          }
+        }
       })
     )
 
@@ -57,7 +88,7 @@ export class ExampleScene extends Scene implements Lifecycle {
     this.light3.position.set(0, 5, 0)
 
     this.add(
-      this.torusKnot,
+      this.mesh,
       this.light1,
       this.light2,
       this.light3
@@ -65,7 +96,14 @@ export class ExampleScene extends Scene implements Lifecycle {
   }
 
   public async load(): Promise<void> {
+    const noiseMap = await new Promise<Texture>((resolve, reject) => {
+      new TextureLoader().load(noiseMapSrc, resolve, reject)
+    })
 
+    noiseMap.wrapS = RepeatWrapping
+    noiseMap.wrapT = RepeatWrapping
+
+    this.mesh.material.uniforms.noiseMap.value = noiseMap
   }
 
   public update(): void {
@@ -76,8 +114,7 @@ export class ExampleScene extends Scene implements Lifecycle {
     this.light2.position.y = Math.sin(theta + this.clock.elapsed * 0.001) * 4
     this.light2.position.z = Math.cos(theta + this.clock.elapsed * 0.0005) * 2
 
-    this.torusKnot.rotation.x += 0.0002 * this.clock.delta
-    this.torusKnot.rotation.y += 0.0002 * this.clock.delta
+    this.mesh.material.uniforms.time.value = this.clock.elapsed
   }
 
   public resize(): void {
@@ -86,7 +123,7 @@ export class ExampleScene extends Scene implements Lifecycle {
   }
 
   public dispose(): void {
-    this.torusKnot.geometry.dispose()
-    this.torusKnot.material.dispose()
+    this.mesh.geometry.dispose()
+    this.mesh.material.dispose()
   }
 }
