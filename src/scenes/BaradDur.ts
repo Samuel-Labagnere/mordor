@@ -9,6 +9,8 @@ import {
   AmbientLight,
   PointLight,
   PerspectiveCamera,
+  DirectionalLight,
+  Object3D,
   type Texture
 } from 'three'
 
@@ -18,14 +20,14 @@ import type {
   Lifecycle
 } from '~/core'
 
-import { GLTFLoader } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader, LightProbeHelper } from 'three/examples/jsm/Addons.js';
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import vertexShader from '~/shaders/sauron-eye.vert'
 import fragmentShader from '~/shaders/sauron-eye.frag'
 import noiseMapSrc from '~~/assets/textures/perlin-noise.png'
 import baradDur from '~~/assets/models/castle_of_barad_dur.glb'
 
-export interface BaradDurParamaters {
+export interface BaradDurParameters {
   clock: Clock
   camera: PerspectiveCamera
   viewport: Viewport
@@ -36,15 +38,20 @@ export class BaradDur extends Scene implements Lifecycle {
   public camera: PerspectiveCamera
   public viewport: Viewport
   public mesh: Points<IcosahedronGeometry, CustomShaderMaterial>
-  public ambiantLight: AmbientLight
-  public fireProjectionLight: PointLight
+  public ambientLight: AmbientLight
+  public backLight: DirectionalLight
+  public backLightTarget: Object3D
+  public light1: PointLight
+  public light2: PointLight
+  public light3: PointLight
+  public light4: PointLight
   public loader: GLTFLoader
 
   public constructor({
     clock,
     camera,
     viewport
-  }: BaradDurParamaters) {
+  }: BaradDurParameters) {
     super()
 
     this.clock = clock
@@ -56,17 +63,17 @@ export class BaradDur extends Scene implements Lifecycle {
       new CustomShaderMaterial({
         baseMaterial: new PointsMaterial({
           color: 0xffffff,
-          size: 1.,
+          size: .025,
           blending: AdditiveBlending
         }),
         vertexShader,
         fragmentShader,
         uniforms: {
           radius: {
-            value: 1
+            value: .025
           },
           noiseAmplitude: {
-            value: 2.5
+            value: .5
           },
           noiseSpeed: {
             value: 0.0015
@@ -84,18 +91,41 @@ export class BaradDur extends Scene implements Lifecycle {
       })
     )
 
-    this.ambiantLight = new AmbientLight(0xbfbddb, 1.0)
-    this.ambiantLight.position.set(10, 10, 10)
+    this.ambientLight = new AmbientLight(0xbfbddb, 1.)
 
-    this.fireProjectionLight = new PointLight(0xff0000, 1000.0, 20.0)
-    this.fireProjectionLight.position.set(0, 1, 0)
+    this.backLightTarget = new Object3D()
+    this.backLightTarget.position.set(0, -10, 5)
+
+    this.backLight = new DirectionalLight(0xbfbddb, 7.5)
+    this.backLight.position.set(-10, -22, -10)
+    this.backLight.target = this.backLightTarget
+
+    const lightPositions: [number, number, number][] = [
+      [0, -.5, 1.5],
+      [1.5, -.5, 0],
+      [0, -.5, -1.5],
+      [-1.5, -.5, 0],
+    ]
+
+    const lights: Array<PointLight> = lightPositions.map(pos => {
+      const light = new PointLight(0xff2200, 50.0, 25.0, 2.5)
+      light.position.set(...pos)
+      return light
+    })
+
+    ;[this.light1, this.light2, this.light3, this.light4] = lights
 
     this.loader = new GLTFLoader()
 
     this.add(
       this.mesh,
-      this.fireProjectionLight,
-      this.ambiantLight
+      this.light1,
+      this.light2,
+      this.light3,
+      this.light4,
+      this.ambientLight,
+      this.backLightTarget,
+      this.backLight
     )
   }
 
@@ -113,7 +143,7 @@ export class BaradDur extends Scene implements Lifecycle {
       baradDur,
       (gltf) => {
         gltf.scene.scale.set(0.02, 0.02, 0.02)
-        gltf.scene.position.set(0, -32, 0)
+        gltf.scene.position.set(0, -31.5, 0)
         this.add(gltf.scene)
       }
     )

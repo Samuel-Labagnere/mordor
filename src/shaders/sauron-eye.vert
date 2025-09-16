@@ -33,5 +33,6 @@ void main() {
 
   vNoise = pow(mod(fragNoise * 10., 1.), 2.);
 
+  csm_Position.xyz = direction * radius;
   csm_Position.xyz += direction * noiseAmplitude * noise.xyz;
 }
