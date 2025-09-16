@@ -18,17 +18,17 @@ import type {
 } from '~/core'
 
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import vertexShader from '~/shaders/blob-sphere.vert'
-import fragmentShader from '~/shaders/blob-sphere.frag'
+import vertexShader from '~/shaders/sauron-eye.vert'
+import fragmentShader from '~/shaders/sauron-eye.frag'
 import noiseMapSrc from '~~/assets/textures/perlin-noise.png'
 
-export interface MainSceneParamaters {
+export interface BaradDurParamaters {
   clock: Clock
   camera: PerspectiveCamera
   viewport: Viewport
 }
 
-export class ExampleScene extends Scene implements Lifecycle {
+export class BaradDur extends Scene implements Lifecycle {
   public clock: Clock
   public camera: PerspectiveCamera
   public viewport: Viewport
@@ -41,7 +41,7 @@ export class ExampleScene extends Scene implements Lifecycle {
     clock,
     camera,
     viewport
-  }: MainSceneParamaters) {
+  }: BaradDurParamaters) {
     super()
 
     this.clock = clock
@@ -66,7 +66,10 @@ export class ExampleScene extends Scene implements Lifecycle {
             value: .75
           },
           noiseSpeed: {
-            value: 0.00003
+            value: 0.0015
+          },
+          effectSpeed: {
+            value: 0.0075
           },
           time: {
             value: 0
