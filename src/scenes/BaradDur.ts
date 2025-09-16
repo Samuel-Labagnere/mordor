@@ -6,6 +6,7 @@ import {
   TextureLoader,
   RepeatWrapping,
   AdditiveBlending,
+  AmbientLight,
   PointLight,
   PerspectiveCamera,
   type Texture
@@ -17,10 +18,12 @@ import type {
   Lifecycle
 } from '~/core'
 
+import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import vertexShader from '~/shaders/sauron-eye.vert'
 import fragmentShader from '~/shaders/sauron-eye.frag'
 import noiseMapSrc from '~~/assets/textures/perlin-noise.png'
+import baradDur from '~~/assets/models/castle_of_barad_dur.glb'
 
 export interface BaradDurParamaters {
   clock: Clock
@@ -33,9 +36,9 @@ export class BaradDur extends Scene implements Lifecycle {
   public camera: PerspectiveCamera
   public viewport: Viewport
   public mesh: Points<IcosahedronGeometry, CustomShaderMaterial>
-  public light1: PointLight
-  public light2: PointLight
-  public light3: PointLight
+  public ambiantLight: AmbientLight
+  public fireProjectionLight: PointLight
+  public loader: GLTFLoader
 
   public constructor({
     clock,
@@ -48,7 +51,7 @@ export class BaradDur extends Scene implements Lifecycle {
     this.camera = camera
     this.viewport = viewport
 
-    this.mesh = new Points(
+    this.mesh = new Points( // Add SelectiveBloomEffect from postprocessing ?
       new IcosahedronGeometry(1.3, 64),
       new CustomShaderMaterial({
         baseMaterial: new PointsMaterial({
@@ -63,7 +66,7 @@ export class BaradDur extends Scene implements Lifecycle {
             value: 1
           },
           noiseAmplitude: {
-            value: .75
+            value: 2.5
           },
           noiseSpeed: {
             value: 0.0015
@@ -81,20 +84,18 @@ export class BaradDur extends Scene implements Lifecycle {
       })
     )
 
-    this.light1 = new PointLight(0xffbbff, 0.5, 30, 0.5)
-    this.light1.position.set(2, 0, -2)
+    this.ambiantLight = new AmbientLight(0xbfbddb, 1.0)
+    this.ambiantLight.position.set(10, 10, 10)
 
-    this.light2 = new PointLight(0xbbffff, 0.5, 30, 0.5)
-    this.light2.position.set(-2, 4, 2)
+    this.fireProjectionLight = new PointLight(0xff0000, 1000.0, 20.0)
+    this.fireProjectionLight.position.set(0, 1, 0)
 
-    this.light3 = new PointLight(0xffffff, 1, 30, 2)
-    this.light3.position.set(0, 5, 0)
+    this.loader = new GLTFLoader()
 
     this.add(
       this.mesh,
-      this.light1,
-      this.light2,
-      this.light3
+      this.fireProjectionLight,
+      this.ambiantLight
     )
   }
 
@@ -107,16 +108,18 @@ export class BaradDur extends Scene implements Lifecycle {
     noiseMap.wrapT = RepeatWrapping
 
     this.mesh.material.uniforms.noiseMap.value = noiseMap
+
+    this.loader.load(
+      baradDur,
+      (gltf) => {
+        gltf.scene.scale.set(0.02, 0.02, 0.02)
+        gltf.scene.position.set(0, -32, 0)
+        this.add(gltf.scene)
+      }
+    )
   }
 
   public update(): void {
-    const theta = Math.atan2(this.camera.position.x, this.camera.position.z)
-
-    this.light1.position.x = Math.cos(theta + this.clock.elapsed * 0.001) * 2
-    this.light1.position.z = Math.sin(theta + this.clock.elapsed * 0.0005) * 2
-    this.light2.position.y = Math.sin(theta + this.clock.elapsed * 0.001) * 4
-    this.light2.position.z = Math.cos(theta + this.clock.elapsed * 0.0005) * 2
-
     this.mesh.material.uniforms.time.value = this.clock.elapsed
   }
 
