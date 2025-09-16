@@ -11,6 +11,7 @@ import {
   PerspectiveCamera,
   DirectionalLight,
   Object3D,
+  EquirectangularReflectionMapping,
   type Texture
 } from 'three'
 
@@ -20,7 +21,7 @@ import type {
   Lifecycle
 } from '~/core'
 
-import { GLTFLoader, LightProbeHelper } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader, RGBELoader } from 'three/examples/jsm/Addons.js';
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import vertexShader from '~/shaders/sauron-eye.vert'
 import fragmentShader from '~/shaders/sauron-eye.frag'
@@ -45,7 +46,8 @@ export class BaradDur extends Scene implements Lifecycle {
   public light2: PointLight
   public light3: PointLight
   public light4: PointLight
-  public loader: GLTFLoader
+  public gltfLoader: GLTFLoader
+  public rgbeLoader: RGBELoader
 
   public constructor({
     clock,
@@ -115,7 +117,8 @@ export class BaradDur extends Scene implements Lifecycle {
 
     ;[this.light1, this.light2, this.light3, this.light4] = lights
 
-    this.loader = new GLTFLoader()
+    this.gltfLoader = new GLTFLoader()
+    this.rgbeLoader = new RGBELoader()
 
     this.add(
       this.mesh,
@@ -139,12 +142,21 @@ export class BaradDur extends Scene implements Lifecycle {
 
     this.mesh.material.uniforms.noiseMap.value = noiseMap
 
-    this.loader.load(
+    this.gltfLoader.load(
       baradDur,
       (gltf) => {
         gltf.scene.scale.set(0.02, 0.02, 0.02)
         gltf.scene.position.set(0, -31.5, 0)
         this.add(gltf.scene)
+      }
+    )
+
+    this.rgbeLoader.load(
+      '../assets/textures/overcast_soil_puresky_1k.hdr',
+      (texture) => {
+        texture.mapping = EquirectangularReflectionMapping
+        this.background = texture
+        this.backgroundIntensity = .1
       }
     )
   }
