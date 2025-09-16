@@ -53,7 +53,7 @@ export class BaradDur extends Scene implements Lifecycle {
       new CustomShaderMaterial({
         baseMaterial: new PointsMaterial({
           color: 0xffffff,
-          size: 0.02,
+          size: 1.,
           blending: AdditiveBlending
         }),
         vertexShader,

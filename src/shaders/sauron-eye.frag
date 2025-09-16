@@ -23,7 +23,7 @@ void main() {
   float baseHue = mod(time * effectSpeed * .1 + vNoise, 1.);
 
   // Forcing hue to remain in the red/orange range for the fire visuals
-  float hue = mix(0., .15, baseHue);
+  float hue = mix(0., .015, baseHue);
 
   // Wavering brightness with a slight offset for a flickering fire effect
   float brightness = mix(.25, 1., (sin(time * effectSpeed) * .5) + .5);
