@@ -16,7 +16,7 @@ import type {
   Viewport,
   Lifecycle
 } from '~/core'
-import { RainEffect } from './RainEffect'
+import { RainDropsEffect } from './RainDropsEffect'
 import { RainingEffect } from './RainingEffect'
 
 export interface ComposerParameters  {
@@ -33,7 +33,7 @@ export class Composer extends EffectComposer implements Lifecycle {
   public renderPass: RenderPass
   public effectPass?: EffectPass
   public fxaaEffect?: FXAAEffect
-  public rainEffect?: RainEffect
+  public rainEffect?: RainDropsEffect
   public rainPass?: EffectPass
   public rainingEffect?: RainingEffect
   public rainingPass?: EffectPass
@@ -59,7 +59,7 @@ export class Composer extends EffectComposer implements Lifecycle {
     this.fxaaEffect = new FXAAEffect()
     this.effectPass = new EffectPass(this.camera, this.fxaaEffect)
 
-    this.rainEffect = new RainEffect()
+    this.rainEffect = new RainDropsEffect()
     this.rainPass = new EffectPass(this.camera, this.rainEffect)
 
     this.rainingEffect = new RainingEffect()

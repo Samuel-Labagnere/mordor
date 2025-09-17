@@ -1,13 +1,13 @@
 import { Effect } from 'postprocessing'
 import { NormalBlending, Uniform, WebGLRenderer, WebGLRenderTarget } from 'three'
 
-import rainFragmentShader from '~/shaders/rain.frag'
+import rainDropsFragmentShader from '~/shaders/rain-drops.frag'
 
-export class RainEffect extends Effect {
+export class RainDropsEffect extends Effect {
   constructor() {
     super(
       'RainEffect',
-      rainFragmentShader,
+      rainDropsFragmentShader,
       {
         blendFunction: NormalBlending,
         uniforms: new Map(
