@@ -1,4 +1,5 @@
 import { App } from '~/App'
+import { playThunderLoop } from './utils/thunder-player'
 
 App
   .mount({
@@ -7,4 +8,7 @@ App
   })
   .then(() => {
     document.body.classList.add('loaded')
+    const rain: HTMLAudioElement|null = document.querySelector('#ambientRain')
+    rain?.play()
+    playThunderLoop()
   })

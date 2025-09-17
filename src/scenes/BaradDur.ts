@@ -217,7 +217,7 @@ export class BaradDur extends Scene implements Lifecycle {
       if (player) {
         player.play()
         // Skip the slow beginning which leads to confusion weither the audio started or not
-        player.currentTime = 1.75
+        player.currentTime = 15.7
       }
       if (dialog) {
         dialog.style.setProperty('opacity', '1')
