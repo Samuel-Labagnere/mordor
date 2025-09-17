@@ -28,6 +28,7 @@ import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import vertexShader from '~/shaders/sauron-eye.vert'
 import fragmentShader from '~/shaders/sauron-eye.frag'
 import noiseMapSrc from '~~/assets/textures/perlin-noise.png'
+import skybox from '~~/assets/textures/overcast_soil_puresky_1k.hdr'
 import baradDur from '~~/assets/models/castle_of_barad_dur.glb'
 
 export interface BaradDurParameters {
@@ -169,7 +170,7 @@ export class BaradDur extends Scene implements Lifecycle {
     )
 
     this.rgbeLoader.load(
-      '~~/assets/textures/overcast_soil_puresky_1k.hdr',
+      skybox,
       (texture) => {
         texture.mapping = EquirectangularReflectionMapping
         this.background = texture

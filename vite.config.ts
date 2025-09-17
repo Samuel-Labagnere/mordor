@@ -8,7 +8,8 @@ export default defineConfig({
     '**/*.gltf',
     '**/*.glb',
     '**/*.obj',
-    '**/*.mtl'
+    '**/*.mtl',
+    '**/*.hdr'
   ],
   plugins: [
     tsconfigPaths(),
