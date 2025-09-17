@@ -16,8 +16,8 @@ import type {
   Viewport,
   Lifecycle
 } from '~/core'
-import { RainDropsEffect } from './RainDropsEffect'
-import { RainingEffect } from './RainingEffect'
+import { RainDropsEffect } from './postprocessing/RainDropsEffect'
+import { RainingEffect } from './postprocessing/RainingEffect'
 
 export interface ComposerParameters  {
   renderer: WebGLRenderer
