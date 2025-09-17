@@ -221,7 +221,7 @@ export class BaradDur extends Scene implements Lifecycle {
       }
       if (dialog) {
         dialog.style.setProperty('opacity', '1')
-        setTimeout(() => dialog.style.setProperty('opacity', '0'), 1000)
+        setTimeout(() => dialog.style.setProperty('opacity', '0'), 1500)
       }
     }
     document.addEventListener('keyup', startCallback)
