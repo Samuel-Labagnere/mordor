@@ -12,6 +12,8 @@ import {
   DirectionalLight,
   Object3D,
   EquirectangularReflectionMapping,
+  CapsuleGeometry,
+  Mesh,
   type Texture
 } from 'three'
 
@@ -38,7 +40,8 @@ export class BaradDur extends Scene implements Lifecycle {
   public clock: Clock
   public camera: PerspectiveCamera
   public viewport: Viewport
-  public mesh: Points<IcosahedronGeometry, CustomShaderMaterial>
+  public eyeMesh: Points<IcosahedronGeometry, CustomShaderMaterial>
+  public pupilMesh: Mesh<CapsuleGeometry, CustomShaderMaterial>
   public ambientLight: AmbientLight
   public backLight: DirectionalLight
   public backLightTarget: Object3D
@@ -60,7 +63,7 @@ export class BaradDur extends Scene implements Lifecycle {
     this.camera = camera
     this.viewport = viewport
 
-    this.mesh = new Points( // Add SelectiveBloomEffect from postprocessing ?
+    this.eyeMesh = new Points( // TODO: Add SelectiveBloomEffect from postprocessing ?
       new IcosahedronGeometry(1.3, 64),
       new CustomShaderMaterial({
         baseMaterial: new PointsMaterial({
@@ -93,6 +96,20 @@ export class BaradDur extends Scene implements Lifecycle {
       })
     )
 
+    this.pupilMesh = new Mesh(
+      new CapsuleGeometry(.05, .2, 1., 8.),
+      new CustomShaderMaterial({
+        baseMaterial: new PointsMaterial({
+          color: 0x000000,
+          size: .025
+        }),
+      })
+    )
+    this.pupilMesh.position.set(0, 0, .35)
+
+    this.eyeMesh.attach(this.pupilMesh)
+    this.eyeMesh.rotateX(.75) // TODO: Make it follow the camera - later add some intended latency
+
     this.ambientLight = new AmbientLight(0xbfbddb, 1.)
 
     this.backLightTarget = new Object3D()
@@ -121,7 +138,7 @@ export class BaradDur extends Scene implements Lifecycle {
     this.rgbeLoader = new RGBELoader()
 
     this.add(
-      this.mesh,
+      this.eyeMesh,
       this.light1,
       this.light2,
       this.light3,
@@ -140,7 +157,7 @@ export class BaradDur extends Scene implements Lifecycle {
     noiseMap.wrapS = RepeatWrapping
     noiseMap.wrapT = RepeatWrapping
 
-    this.mesh.material.uniforms.noiseMap.value = noiseMap
+    this.eyeMesh.material.uniforms.noiseMap.value = noiseMap
 
     this.gltfLoader.load(
       baradDur,
@@ -162,7 +179,7 @@ export class BaradDur extends Scene implements Lifecycle {
   }
 
   public update(): void {
-    this.mesh.material.uniforms.time.value = this.clock.elapsed
+    this.eyeMesh.material.uniforms.time.value = this.clock.elapsed
   }
 
   public resize(): void {
@@ -171,7 +188,7 @@ export class BaradDur extends Scene implements Lifecycle {
   }
 
   public dispose(): void {
-    this.mesh.geometry.dispose()
-    this.mesh.material.dispose()
+    this.eyeMesh.geometry.dispose()
+    this.eyeMesh.material.dispose()
   }
 }
