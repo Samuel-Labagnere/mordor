@@ -181,6 +181,7 @@ export class BaradDur extends Scene implements Lifecycle {
 
   public update(): void {
     this.eyeMesh.material.uniforms.time.value = this.clock.elapsed
+    this.eyeMesh.lookAt(this.camera.position);
   }
 
   public resize(): void {
