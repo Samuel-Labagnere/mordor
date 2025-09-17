@@ -28,7 +28,7 @@ export class App implements Lifecycle {
   }: AppParameters = {}) {
     this.debug = debug
     this.clock = new Clock()
-    this.camera = new PerspectiveCamera(50, 1, 0.1, 100)
+    this.camera = new PerspectiveCamera(50, 1, 0.1, 500)
 
     this.renderer = new WebGLRenderer({
       canvas,

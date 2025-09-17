@@ -16,7 +16,8 @@ import {
   Mesh,
   Group,
   type Texture,
-  RawShaderMaterial
+  PlaneGeometry,
+  MeshStandardMaterial
 } from 'three'
 
 import type {
@@ -32,6 +33,9 @@ import fragmentShader from '~/shaders/sauron-eye.frag'
 import noiseMapSrc from '~~/assets/textures/perlin-noise.png'
 import skybox from '~~/assets/textures/overcast_soil_puresky_1k.hdr'
 import baradDur from '~~/assets/models/castle_of_barad_dur.glb'
+import rockDiff from '~~/assets/textures/lichen_rock_diff_1k.jpg'
+import rockNor from '~~/assets/textures/lichen_rock_nor_gl_1k.jpg'
+import rockArm from '~~/assets/textures/lichen_rock_arm_1k.jpg'
 
 export interface BaradDurParameters {
   clock: Clock
@@ -45,12 +49,14 @@ export class BaradDur extends Scene implements Lifecycle {
   public viewport: Viewport
   public eyeMesh: Points<IcosahedronGeometry, CustomShaderMaterial>
   public pupilMesh: Mesh<CapsuleGeometry, CustomShaderMaterial>
+  public plane: Mesh<PlaneGeometry, MeshStandardMaterial>
   public ambientLight: AmbientLight
   public backLight: DirectionalLight
   public backLightTarget: Object3D
   public lights: Group
   public gltfLoader: GLTFLoader
   public rgbeLoader: RGBELoader
+  public textureLoader: TextureLoader
 
   public constructor({
     clock,
@@ -110,12 +116,12 @@ export class BaradDur extends Scene implements Lifecycle {
     this.eyeMesh.attach(this.pupilMesh)
     this.eyeMesh.visible = false
 
-    this.ambientLight = new AmbientLight(0xbfbddb, 1.)
+    this.ambientLight = new AmbientLight(0x6e6e6e, 1.)
 
     this.backLightTarget = new Object3D()
     this.backLightTarget.position.set(0, -10, 5)
 
-    this.backLight = new DirectionalLight(0xbfbddb, 7.5)
+    this.backLight = new DirectionalLight(0x2c2b40, 50.)
     this.backLight.position.set(-10, -22, -10)
     this.backLight.target = this.backLightTarget
 
@@ -137,16 +143,27 @@ export class BaradDur extends Scene implements Lifecycle {
     const light4 = new PointLight(0xff2200, 50.0, 25.0, 2.5)
     light4.position.set(-1.5, -.5, 0)
     this.lights.add(light4)
+
+    this.plane = new Mesh(
+      new PlaneGeometry(500, 500),
+      new MeshStandardMaterial({
+        color: 0x545353
+      })
+    )
+    this.plane.rotateX(-1.57)
+    this.plane.position.set(0, -29, 0)
     
     this.gltfLoader = new GLTFLoader()
     this.rgbeLoader = new RGBELoader()
+    this.textureLoader = new TextureLoader()
 
     this.add(
       this.eyeMesh,
       this.lights,
       this.ambientLight,
       this.backLightTarget,
-      this.backLight
+      this.backLight,
+      this.plane
     )
   }
 
@@ -177,6 +194,16 @@ export class BaradDur extends Scene implements Lifecycle {
         this.backgroundIntensity = .1
       }
     )
+
+    this.textureLoader.load(rockDiff, (texture) => this.plane.material.map = texture)
+    this.textureLoader.load(rockNor, (texture) => this.plane.material.normalMap = texture)
+    this.textureLoader.load(rockArm, (texture) => {
+      this.plane.material.aoMap = texture
+      this.plane.material.roughnessMap = texture
+      this.plane.material.metalnessMap = texture
+      texture.wrapS = RepeatWrapping
+      texture.wrapT = RepeatWrapping
+    })
 
     const startCallback = (_event: KeyboardEvent|MouseEvent) => {
       this.eyeMesh.visible = true
