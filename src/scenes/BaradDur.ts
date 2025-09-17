@@ -169,7 +169,7 @@ export class BaradDur extends Scene implements Lifecycle {
     )
 
     this.rgbeLoader.load(
-      '../assets/textures/overcast_soil_puresky_1k.hdr',
+      '~~/assets/textures/overcast_soil_puresky_1k.hdr',
       (texture) => {
         texture.mapping = EquirectangularReflectionMapping
         this.background = texture
