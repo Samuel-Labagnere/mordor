@@ -10,6 +10,7 @@ body {
   background: #000;
   margin: 0;
   position: relative;
+  display: flex;
 }
 
 canvas {
@@ -19,4 +20,23 @@ canvas {
   left: 0;
   object-fit: cover;
   position: absolute;
+}
+
+#spotted {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, CALC(-50% - 6rem));
+  text-align: center;
+  color: darkred;
+  text-shadow: 1px 1px 1px black;
+  font-family: 'quintessential', serif;
+  font-size: 6rem;
+  opacity: 0;
+  transition: all .2s ease-in-out;
+}
+
+@font-face {
+  font-family: 'quintessential';
+  src: url("../fonts/Quintessential-Regular.ttf") format("truetype");
 }

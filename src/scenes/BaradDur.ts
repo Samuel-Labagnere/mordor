@@ -208,14 +208,21 @@ export class BaradDur extends Scene implements Lifecycle {
     const startCallback = (_event: KeyboardEvent|MouseEvent) => {
       this.eyeMesh.visible = true
       this.lights.visible = true
+      document.removeEventListener('keyup', startCallback)
+      document.removeEventListener('mousedown', startCallback)
+
       const player: HTMLAudioElement|null = document.querySelector('#musicPlayer')
+      const dialog: HTMLParagraphElement|null = document.querySelector('#spotted')
+
       if (player) {
         player.play()
         // Skip the slow beginning which leads to confusion weither the audio started or not
         player.currentTime = 1.75
       }
-      document.removeEventListener('keyup', startCallback)
-      document.removeEventListener('mousedown', startCallback)
+      if (dialog) {
+        dialog.style.setProperty('opacity', '1')
+        setTimeout(() => dialog.style.setProperty('opacity', '0'), 1000)
+      }
     }
     document.addEventListener('keyup', startCallback)
     document.addEventListener('mousedown', startCallback)
