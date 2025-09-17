@@ -14,7 +14,9 @@ import {
   EquirectangularReflectionMapping,
   CapsuleGeometry,
   Mesh,
-  type Texture
+  Group,
+  type Texture,
+  RawShaderMaterial
 } from 'three'
 
 import type {
@@ -46,10 +48,7 @@ export class BaradDur extends Scene implements Lifecycle {
   public ambientLight: AmbientLight
   public backLight: DirectionalLight
   public backLightTarget: Object3D
-  public light1: PointLight
-  public light2: PointLight
-  public light3: PointLight
-  public light4: PointLight
+  public lights: Group
   public gltfLoader: GLTFLoader
   public rgbeLoader: RGBELoader
 
@@ -109,7 +108,7 @@ export class BaradDur extends Scene implements Lifecycle {
     this.pupilMesh.position.set(0, 0, .35)
 
     this.eyeMesh.attach(this.pupilMesh)
-    this.eyeMesh.rotateX(.75) // TODO: Make it follow the camera - later add some intended latency
+    this.eyeMesh.visible = false
 
     this.ambientLight = new AmbientLight(0xbfbddb, 1.)
 
@@ -120,30 +119,31 @@ export class BaradDur extends Scene implements Lifecycle {
     this.backLight.position.set(-10, -22, -10)
     this.backLight.target = this.backLightTarget
 
-    const lightPositions: [number, number, number][] = [
-      [0, -.5, 1.5],
-      [1.5, -.5, 0],
-      [0, -.5, -1.5],
-      [-1.5, -.5, 0],
-    ]
+    this.lights = new Group()
+    this.lights.visible = false
 
-    const lights: Array<PointLight> = lightPositions.map(pos => {
-      const light = new PointLight(0xff2200, 50.0, 25.0, 2.5)
-      light.position.set(...pos)
-      return light
-    })
+    const light1 = new PointLight(0xff2200, 50.0, 25.0, 2.5)
+    light1.position.set(0, -.5, 1.5)
+    this.lights.add(light1)
 
-    ;[this.light1, this.light2, this.light3, this.light4] = lights
+    const light2 = new PointLight(0xff2200, 50.0, 25.0, 2.5)
+    light2.position.set(1.5, -.5, 0)
+    this.lights.add(light2)
 
+    const light3 = new PointLight(0xff2200, 50.0, 25.0, 2.5)
+    light3.position.set(0, -.5, -1.5)
+    this.lights.add(light3)
+
+    const light4 = new PointLight(0xff2200, 50.0, 25.0, 2.5)
+    light4.position.set(-1.5, -.5, 0)
+    this.lights.add(light4)
+    
     this.gltfLoader = new GLTFLoader()
     this.rgbeLoader = new RGBELoader()
 
     this.add(
       this.eyeMesh,
-      this.light1,
-      this.light2,
-      this.light3,
-      this.light4,
+      this.lights,
       this.ambientLight,
       this.backLightTarget,
       this.backLight
@@ -177,6 +177,21 @@ export class BaradDur extends Scene implements Lifecycle {
         this.backgroundIntensity = .1
       }
     )
+
+    const startCallback = (_event: KeyboardEvent|MouseEvent) => {
+      this.eyeMesh.visible = true
+      this.lights.visible = true
+      const player: HTMLAudioElement|null = document.querySelector('#musicPlayer')
+      if (player) {
+        player.play()
+        // Skip the slow beginning which leads to confusion weither the audio started or not
+        player.currentTime = 1.75
+      }
+      document.removeEventListener('keyup', startCallback)
+      document.removeEventListener('mousedown', startCallback)
+    }
+    document.addEventListener('keyup', startCallback)
+    document.addEventListener('mousedown', startCallback)
   }
 
   public update(): void {
