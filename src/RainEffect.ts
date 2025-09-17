@@ -8,7 +8,7 @@ export class RainEffect extends Effect {
     super(
       'RainEffect',
       rainFragmentShader,
-        {
+      {
         blendFunction: NormalBlending,
         uniforms: new Map(
           [
@@ -21,8 +21,6 @@ export class RainEffect extends Effect {
   }
 
   public update(_renderer: WebGLRenderer, _inputBuffer: WebGLRenderTarget, deltaTime?: number) {
-    if (!this.uniforms) { return }
-
     // @ts-ignore
     this.uniforms.get('time').value += deltaTime
   }

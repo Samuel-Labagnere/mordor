@@ -61,11 +61,9 @@ void mainImage(in vec4 inputColor, in vec2 uv, out vec4 outputColor) {
     + rainDropsWithIndexModifier(uv, seed, 5);
   uv += drops;
 
-  // Sample the rendered scene texture with displaced UVs
+  // Sample the rendered scene texture and a slight brightness
   vec4 sceneColor = texture(tDiffuse, uv);
-
-  // Add a slight brightness to simulate light reflection
-  sceneColor.rgb += drops.x * 0.2;
+  sceneColor.rgb += drops.x * .2;
 
   outputColor = sceneColor;
 }
