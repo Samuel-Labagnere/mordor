@@ -16,6 +16,7 @@ import type {
   Viewport,
   Lifecycle
 } from '~/core'
+import { RainEffect } from './RainEffect'
 
 export interface ComposerParameters  {
   renderer: WebGLRenderer
@@ -31,6 +32,8 @@ export class Composer extends EffectComposer implements Lifecycle {
   public renderPass: RenderPass
   public effectPass?: EffectPass
   public fxaaEffect?: FXAAEffect
+  public rainEffect?: RainEffect
+  public rainPass?: EffectPass
 
   public get camera(): Camera | undefined {
     return this.renderPass.mainCamera
@@ -53,8 +56,12 @@ export class Composer extends EffectComposer implements Lifecycle {
     this.fxaaEffect = new FXAAEffect()
     this.effectPass = new EffectPass(this.camera, this.fxaaEffect)
 
+    this.rainEffect = new RainEffect()
+    this.rainPass = new EffectPass(this.camera, this.rainEffect)
+
     this.addPass(this.renderPass)
     this.addPass(this.effectPass)
+    this.addPass(this.rainPass)
   }
 
   public update(): void {
