@@ -5,6 +5,9 @@ Learning ThreeJS, we need to build a small website with 3D interactibles.
 
 Focusing on LOTR and the Barad Dur here, the tower from the Evil Lord Sauron.
 
+## Links
+[Github Pages](https://samuel-labagnere.github.io/mordor/)
+
 ## TODO
 - [x] Make the Eye follow the camera with some intended latency
 (like you're escaping it and it won't allow you)
