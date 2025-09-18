@@ -19,4 +19,6 @@ Focusing on LOTR and the Barad Dur here, the tower from the Evil Lord Sauron.
 - [x] Make the light intensity from the Eye slowly itensify
 - [x] Configure the CameraControls to avoid the user to clip through objects
 - [x] Hint the user on how to make the Eye appear
+- [ ] Make a first panel that introduces the project and asks to click to enter the website
+(since browsers may require user interaction prior to be able to play audios, thus preventing ambient sounds to play properly here)
 - [ ] Add a funny screamer of Scary Bilbo when trying to look the Eye too close
