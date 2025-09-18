@@ -3,17 +3,18 @@ import {
   AmbientLight,
   PerspectiveCamera,
   DirectionalLight,
-  Object3D
+  Object3D,
+  EquirectangularReflectionMapping
 } from 'three'
-
 import type {
   Viewport,
   Clock,
   Lifecycle
 } from '~/core'
-
+import skybox from '~~/assets/textures/overcast_soil_puresky_1k.hdr'
 import { TheEye } from '~/objects/TheEye'
 import { BaradDur } from '~/objects/BaradDur'
+import { RGBELoader } from 'three/examples/jsm/Addons.js'
 
 export interface BaradDurSceneParameters {
   clock: Clock
@@ -25,6 +26,7 @@ export class BaradDurScene extends Scene implements Lifecycle {
   public clock: Clock
   public camera: PerspectiveCamera
   public viewport: Viewport
+  public rgbeLoader: RGBELoader
   public eye: TheEye
   public baradDur: BaradDur
   public ambientLight: AmbientLight
@@ -41,11 +43,13 @@ export class BaradDurScene extends Scene implements Lifecycle {
     this.clock = clock
     this.camera = camera
     this.viewport = viewport
+    this.rgbeLoader = new RGBELoader()
 
-    this.eye = new TheEye({ clock: this.clock, camera: this.camera, scene: this })
-    this.eye.initialize()
+    this.eye = new TheEye({ clock: this.clock, camera: this.camera })
+    this.eye.position.set(0, 0, 0)
 
-    this.baradDur = new BaradDur({ scene: this })
+    this.baradDur = new BaradDur()
+    this.baradDur.position.set(0, 0, 0)
 
     this.ambientLight = new AmbientLight(0x6e6e6e, 1.)
 
@@ -57,6 +61,8 @@ export class BaradDurScene extends Scene implements Lifecycle {
     this.backLight.target = this.backLightTarget
 
     this.add(
+      this.baradDur,
+      this.eye,
       this.ambientLight,
       this.backLightTarget,
       this.backLight
@@ -64,8 +70,17 @@ export class BaradDurScene extends Scene implements Lifecycle {
   }
 
   public async load(): Promise<void> {
-    this.eye.loadNoiseMap()
-    this.baradDur.loadBaradDur()
+    this.eye.load()
+    this.baradDur.load()
+
+    this.rgbeLoader.load(
+      skybox,
+      (texture) => {
+        texture.mapping = EquirectangularReflectionMapping
+        this.background = texture
+        this.backgroundIntensity = .1
+      }
+    )
 
     const startCallback = (_event: KeyboardEvent|MouseEvent) => {
       this.eye.show()
@@ -91,14 +106,19 @@ export class BaradDurScene extends Scene implements Lifecycle {
 
   public update(): void {
     this.eye.update()
+    this.baradDur.update()
   }
 
   public resize(): void {
     this.camera.aspect = this.viewport.ratio
     this.camera.updateProjectionMatrix()
+
+    this.eye.resize()
+    this.baradDur.resize()
   }
 
   public dispose(): void {
     this.eye.dispose()
+    this.baradDur.dispose()
   }
 }

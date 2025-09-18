@@ -1,7 +1,4 @@
-import { Clock } from "~/core"
 import {
-  PerspectiveCamera,
-  Scene,
   Points,
   Mesh,
   IcosahedronGeometry,
@@ -12,8 +9,10 @@ import {
   PointLight,
   Object3D,
   TextureLoader,
-  RepeatWrapping
+  RepeatWrapping,
+  type PerspectiveCamera
 } from "three"
+import { Clock, Lifecycle } from "~/core"
 import CustomShaderMaterial from "three-custom-shader-material/vanilla"
 import vertexShader from '~/shaders/sauron-eye.vert'
 import fragmentShader from '~/shaders/sauron-eye.frag'
@@ -21,28 +20,38 @@ import noise from '~~/assets/textures/perlin-noise.png'
 
 export type EyeType = {
   clock: Clock,
-  camera: PerspectiveCamera,
-  scene: Scene
+  camera: PerspectiveCamera
 }
 
-export class TheEye {
+export class TheEye extends Object3D implements Lifecycle {
   public clock: Clock
   public camera: PerspectiveCamera
-  public scene: Scene
   private textureLoader: TextureLoader
-  private eyeMesh: Points<IcosahedronGeometry, CustomShaderMaterial> | null = null
-  private pupilMesh: Mesh<CapsuleGeometry, CustomShaderMaterial> | null = null
-  private lights: Group | null = null
+  private eye: Points<IcosahedronGeometry, CustomShaderMaterial>
+  private pupil: Mesh<CapsuleGeometry, CustomShaderMaterial>
+  private lights: Group
 
-  constructor({ clock, camera, scene }: EyeType) {
+  constructor({ clock, camera }: EyeType) {
+    super()
+
     this.clock = clock
     this.camera = camera
-    this.scene = scene
     this.textureLoader = new TextureLoader()
+
+    this.eye = this.buildEye()
+    this.pupil = this.buildPupil()
+    this.lights = this.generateLights()
+
+    this.eye.attach(this.pupil)
+
+    this.hide()
+
+    this.add(this.eye)
+    this.add(this.lights)
   }
 
   private buildEye(): Points<IcosahedronGeometry, CustomShaderMaterial> {
-     return new Points(
+     const eye = new Points(
       new IcosahedronGeometry(1.3, 64),
       new CustomShaderMaterial({
         baseMaterial: new PointsMaterial({
@@ -74,10 +83,13 @@ export class TheEye {
         }
       })
     )
+    eye.position.set(0, 0, 0)
+
+    return eye
   }
 
   private buildPupil(): Mesh<CapsuleGeometry, CustomShaderMaterial> {
-    return new Mesh(
+    const pupil = new Mesh(
       new CapsuleGeometry(.05, .2, 1., 8.),
       new CustomShaderMaterial({
         baseMaterial: new PointsMaterial({
@@ -86,6 +98,9 @@ export class TheEye {
         }),
       })
     )
+    pupil.position.set(0, 0, 0.35)
+
+    return pupil
   }
 
   private generateLights(): Group {
@@ -110,61 +125,39 @@ export class TheEye {
     return group
   }
 
-  public initialize(): void {
-    this.eyeMesh = this.buildEye()
-    this.pupilMesh = this.buildPupil()
-    this.lights = this.generateLights()
-
-    this.pupilMesh.position.set(0, 0, 0.35)
-    this.eyeMesh.attach(this.pupilMesh)
-
-    this.hide()
-    this.addToScene()
-  }
-
-  private addToScene(): void {
-    this.scene.add(this.eyeMesh as Object3D, this.lights as Object3D)
-  }
-
-  public show(): void {
-    if (!this.eyeMesh || !this.lights) return
-
-    this.eyeMesh.visible = true
-    this.lights.visible = true
-  }
-
-  public hide(): void {
-    if (!this.eyeMesh || !this.lights) return
-
-    this.eyeMesh.visible = false
-    this.lights.visible = false
-  }
-
-  public loadNoiseMap(): void {
-    if (!this.eyeMesh) return
-
+  public async load(): Promise<void> {
     this.textureLoader.load(
       noise,
       (texture) => {
         texture.wrapS = RepeatWrapping
         texture.wrapT = RepeatWrapping
-        this.eyeMesh!.material.uniforms.noiseMap.value = texture
+        this.eye.material.uniforms.noiseMap.value = texture
       }
     )
   }
 
   public update(): void {
-    if (!this.eyeMesh) return
-
-    this.eyeMesh.material.uniforms.time.value = this.clock.elapsed
-    this.eyeMesh.quaternion.rotateTowards(this.camera.quaternion, .05)
+    this.eye.material.uniforms.time.value = this.clock.elapsed
+    this.eye.quaternion.rotateTowards(this.camera.quaternion, .05)
   }
 
-  public dispose(): void {
-    if (!this.eyeMesh || !this.lights) return
+  public resize(): void {}
 
-    this.eyeMesh.geometry.dispose()
-    this.eyeMesh.material.dispose()
+  public dispose(): void {
+    this.pupil.geometry.dispose()
+    this.pupil.material.dispose()
+    this.eye.geometry.dispose()
+    this.eye.material.dispose()
     this.lights.clear()
+  }
+
+  public show(): void {
+    this.eye.visible = true
+    this.lights.visible = true
+  }
+
+  public hide(): void {
+    this.eye.visible = false
+    this.lights.visible = false
   }
 }
