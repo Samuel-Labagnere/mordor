@@ -33,6 +33,7 @@ canvas {
   font-family: 'quintessential', serif;
   font-size: 6rem;
   opacity: 0;
+  pointer-events: none;
   transition: all .2s ease-in-out;
 }
 
