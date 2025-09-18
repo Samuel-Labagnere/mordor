@@ -27,6 +27,7 @@ canvas {
   left: 0;
   bottom: 0;
   width: 100%;
+  height: fit-content;
   font-family: 'quintessential', serif;
   color: darkred;
   text-align: center;
@@ -45,7 +46,6 @@ canvas {
   transform: translate(-50%, -50%);
   font-size: clamp(5vw, 10vw, 18vw);
   opacity: 0;
-  padding: 3rem;
   pointer-events: none;
 }
 
