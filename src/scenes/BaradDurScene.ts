@@ -132,14 +132,10 @@ export class BaradDurScene extends Scene implements Lifecycle {
       setTimeout(() => dialog.style.setProperty('opacity', '0'), 3000)
       index++
 
-      if (index < dialogs.length) {
-        setTimeout(showNextDialog, 10000)
-      } else {
-        setTimeout(() => {
-          index = 0
-          showNextDialog()
-        }, 10000)
-      }
+      setTimeout(() => {
+        if (index >= dialogs.length) index = 0
+        showNextDialog()
+      }, 10000)
     }
 
     setTimeout(showNextDialog, delayOffset)
