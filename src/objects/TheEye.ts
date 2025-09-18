@@ -98,7 +98,7 @@ export class TheEye extends Object3D implements Lifecycle {
         }),
       })
     )
-    pupil.position.set(0, 0, 0.35)
+    pupil.position.set(0, -.1, 0.35)
 
     return pupil
   }
@@ -106,19 +106,19 @@ export class TheEye extends Object3D implements Lifecycle {
   private generateLights(): Group {
     const group = new Group()
 
-    const light1 = new PointLight(0xff2200, 50.0, 25.0, 2.5)
+    const light1 = new PointLight(0xff2200, 3, 25., 2.5)
     light1.position.set(0, -.5, 1.5)
     group.add(light1)
 
-    const light2 = new PointLight(0xff2200, 50.0, 25.0, 2.5)
+    const light2 = new PointLight(0xff2200, 3, 25., 2.5)
     light2.position.set(1.5, -.5, 0)
     group.add(light2)
 
-    const light3 = new PointLight(0xff2200, 50.0, 25.0, 2.5)
+    const light3 = new PointLight(0xff2200, 3, 25., 2.5)
     light3.position.set(0, -.5, -1.5)
     group.add(light3)
 
-    const light4 = new PointLight(0xff2200, 50.0, 25.0, 2.5)
+    const light4 = new PointLight(0xff2200, 3, 25., 2.5)
     light4.position.set(-1.5, -.5, 0)
     group.add(light4)
 
@@ -154,10 +154,30 @@ export class TheEye extends Object3D implements Lifecycle {
   public show(): void {
     this.eye.visible = true
     this.lights.visible = true
+
+    // Over accentuate the light to simulate the Eye producing immense heat, turning the tip red-hot
+    this.lights.children.forEach((light) => this.updateIntensity(light as PointLight, 50, 50000))
   }
 
   public hide(): void {
     this.eye.visible = false
     this.lights.visible = false
+  }
+
+  private updateIntensity(light: PointLight, to: number, duration: number) {
+    const from = light.intensity
+    const change = to - from
+    let currentTime = 0
+
+    const intervalId = setInterval(() => {
+        currentTime += this.clock.delta
+        const progress = Math.min(currentTime / duration, 1)
+        light.intensity = from + change * progress
+
+        if (currentTime >= duration) {
+            clearInterval(intervalId)
+            light.intensity = to
+        }
+    }, this.clock.delta)
   }
 }
