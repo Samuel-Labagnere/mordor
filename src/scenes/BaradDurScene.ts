@@ -44,13 +44,8 @@ export class BaradDurScene extends Scene implements Lifecycle {
     this.camera = camera
     this.viewport = viewport
     this.rgbeLoader = new RGBELoader()
-
     this.eye = new TheEye({ clock: this.clock, camera: this.camera })
-    this.eye.position.set(0, 0, 0)
-
     this.baradDur = new BaradDur()
-    this.baradDur.position.set(0, 0, 0)
-
     this.ambientLight = new AmbientLight(0x6e6e6e, 1.)
 
     this.backLightTarget = new Object3D()
