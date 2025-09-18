@@ -9,19 +9,19 @@ function getRandomSound(sounds: HTMLAudioElement[]) {
 }
 
 function getRandomDelay(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
 export async function playThunderLoop() {
     const sound = getRandomSound(thunderSounds)
 
     await new Promise((resolve) => {
-      sound.play();
-      sound.onended = resolve;
+      sound.play()
+      sound.onended = resolve
     });
 
     const delay = getRandomDelay(MIN_DELAY, MAX_DELAY)
     await new Promise(resolve => setTimeout(resolve, delay))
 
-    playThunderLoop();
+    playThunderLoop()
   }

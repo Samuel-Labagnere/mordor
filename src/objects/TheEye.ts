@@ -11,26 +11,34 @@ import {
   AdditiveBlending,
   PointLight,
   Object3D,
-  type Texture
+  TextureLoader,
+  RepeatWrapping
 } from "three"
 import CustomShaderMaterial from "three-custom-shader-material/vanilla"
 import vertexShader from '~/shaders/sauron-eye.vert'
 import fragmentShader from '~/shaders/sauron-eye.frag'
+import noise from '~~/assets/textures/perlin-noise.png'
 
-export type EyeType = Points<IcosahedronGeometry, CustomShaderMaterial>
+export type EyeType = {
+  clock: Clock,
+  camera: PerspectiveCamera,
+  scene: Scene
+}
 
 export class TheEye {
   public clock: Clock
   public camera: PerspectiveCamera
   public scene: Scene
-  private eyeMesh: EyeType | null = null
+  private textureLoader: TextureLoader
+  private eyeMesh: Points<IcosahedronGeometry, CustomShaderMaterial> | null = null
   private pupilMesh: Mesh<CapsuleGeometry, CustomShaderMaterial> | null = null
   private lights: Group | null = null
 
-  constructor(clock: Clock, camera: PerspectiveCamera, scene: Scene) {
+  constructor({ clock, camera, scene }: EyeType) {
     this.clock = clock
     this.camera = camera
     this.scene = scene
+    this.textureLoader = new TextureLoader()
   }
 
   private buildEye(): Points<IcosahedronGeometry, CustomShaderMaterial> {
@@ -132,10 +140,17 @@ export class TheEye {
     this.lights.visible = false
   }
 
-  public loadNoiseMap(noiseMap: Texture): void {
+  public loadNoiseMap(): void {
     if (!this.eyeMesh) return
 
-    this.eyeMesh.material.uniforms.noiseMap.value = noiseMap
+    this.textureLoader.load(
+      noise,
+      (texture) => {
+        texture.wrapS = RepeatWrapping
+        texture.wrapT = RepeatWrapping
+        this.eyeMesh!.material.uniforms.noiseMap.value = texture
+      }
+    )
   }
 
   public update(): void {

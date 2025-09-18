@@ -3,7 +3,7 @@ import { Clock, Loop, Viewport, type Lifecycle } from '~/core'
 import type { GUI } from '~/GUI'
 import { Composer } from '~/Composer'
 import { Controls } from '~/Controls'
-import { BaradDur } from '~/scenes/BaradDur'
+import { BaradDurScene } from '~/scenes/BaradDurScene'
 
 export interface AppParameters {
   canvas?: HTMLCanvasElement | OffscreenCanvas
@@ -19,7 +19,7 @@ export class App implements Lifecycle {
   public loop: Loop
   public clock: Clock
   public viewport: Viewport
-  public scene: BaradDur
+  public scene: BaradDurScene
   public gui?: GUI
 
   public constructor({
@@ -44,7 +44,7 @@ export class App implements Lifecycle {
       resize: this.resize
     })
 
-    this.scene = new BaradDur({
+    this.scene = new BaradDurScene({
       viewport: this.viewport,
       camera: this.camera,
       clock: this.clock

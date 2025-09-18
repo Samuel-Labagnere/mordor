@@ -22,11 +22,11 @@ export class RainingEffect extends Effect {
 
   public async update(renderer: WebGLRenderer, _inputBuffer: WebGLRenderTarget, deltaTime?: number) {
     // @ts-ignore
-    this.uniforms.get('time').value += deltaTime;
+    this.uniforms.get('time').value += deltaTime
 
-    const size = renderer.getSize(new Vector2());
+    const size = renderer.getSize(new Vector2())
 
     // @ts-ignore
-    this.uniforms.get('resolution').value.set(size.x, size.y, 1);
+    this.uniforms.get('resolution').value.set(size.x, size.y, 1)
   }
 }
