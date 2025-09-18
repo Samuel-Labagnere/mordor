@@ -4,6 +4,7 @@ import { NormalBlending, Uniform, Vector2, Vector3, WebGLRenderer, WebGLRenderTa
 import rainingFragmentShader from '~/shaders/raining.frag'
 
 export class RainingEffect extends Effect {
+  private vector: Vector2
   constructor() {
     super(
       'RainingEffect',
@@ -18,13 +19,14 @@ export class RainingEffect extends Effect {
         )
       }
     )
+    this.vector = new Vector2()
   }
 
   public async update(renderer: WebGLRenderer, _inputBuffer: WebGLRenderTarget, deltaTime?: number) {
     // @ts-ignore
     this.uniforms.get('time').value += deltaTime
 
-    const size = renderer.getSize(new Vector2())
+    const size = renderer.getSize(this.vector)
 
     // @ts-ignore
     this.uniforms.get('resolution').value.set(size.x, size.y, 1)
