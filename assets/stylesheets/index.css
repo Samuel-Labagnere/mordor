@@ -22,22 +22,31 @@ canvas {
   position: absolute;
 }
 
-.dialog {
+#ignitionHint, .dialog {
   position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  font-family: 'quintessential', serif;
+  color: darkred;
+  text-align: center;
+  text-shadow: 1px 1px 1px black;
+  transition: all .2s ease-in-out;
+}
+
+#ignitionHint {
+  font-size: 2rem;
+}
+
+.dialog {
+  margin: 0;
   top: 50%;
   left: 50%;
-  width: 100%;
   transform: translate(-50%, -50%);
-  text-align: center;
-  color: darkred;
-  text-shadow: 1px 1px 1px black;
-  font-family: 'quintessential', serif;
   font-size: clamp(5vw, 10vw, 18vw);
   opacity: 0;
-  margin: 0;
   padding: 3rem;
   pointer-events: none;
-  transition: all .2s ease-in-out;
 }
 
 @font-face {

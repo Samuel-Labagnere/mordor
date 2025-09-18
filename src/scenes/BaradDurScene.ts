@@ -47,7 +47,7 @@ export class BaradDurScene extends Scene implements Lifecycle {
     this.rgbeLoader = new RGBELoader()
     this.eye = new TheEye({ clock: this.clock, camera: this.camera })
     this.baradDur = new BaradDur()
-    this.ambientLight = new AmbientLight(0x6e6e6e, 1.)
+    this.ambientLight = new AmbientLight(0x6e6e6e, 2.)
 
     this.backLightTarget = new Object3D()
     this.backLightTarget.position.set(0, -10, 5)
@@ -81,7 +81,6 @@ export class BaradDurScene extends Scene implements Lifecycle {
       )
     ])
 
-    document.addEventListener('keydown', this.ignitionCallback)
     document.addEventListener('mousedown', this.ignitionCallback)
   }
 
@@ -102,22 +101,22 @@ export class BaradDurScene extends Scene implements Lifecycle {
     this.eye.dispose()
     this.baradDur.dispose()
 
-    document.removeEventListener('keydown', this.ignitionCallback)
     document.removeEventListener('mousedown', this.ignitionCallback)
   }
 
   private ignitionCallback = (_event: KeyboardEvent|MouseEvent) => {
     this.eye.show()
-    document.removeEventListener('keydown', this.ignitionCallback)
     document.removeEventListener('mousedown', this.ignitionCallback)
 
     const player: HTMLAudioElement|null = document.querySelector('#musicPlayer')
+    const hint: HTMLParagraphElement|null = document.querySelector('#ignitionHint')
 
     if (player) {
       player.play()
       // Skip the slow beginning which leads to confusion weither the audio started or not
       player.currentTime = 15.7
     }
+    if (hint) hint.style.setProperty('opacity', '0')
 
     const dialogs = document.querySelectorAll('.dialog')
     if (dialogs) this.startDialogsLoop(dialogs)
