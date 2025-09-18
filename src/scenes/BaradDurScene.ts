@@ -68,38 +68,21 @@ export class BaradDurScene extends Scene implements Lifecycle {
   }
 
   public async load(): Promise<void> {
-    this.eye.load()
-    this.baradDur.load()
+    await Promise.all([
+      this.eye.load(),
+      this.baradDur.load(),
+      this.rgbeLoader.load(
+        skybox,
+        (texture) => {
+          texture.mapping = EquirectangularReflectionMapping
+          this.background = texture
+          this.backgroundIntensity = .1
+        }
+      )
+    ])
 
-    this.rgbeLoader.load(
-      skybox,
-      (texture) => {
-        texture.mapping = EquirectangularReflectionMapping
-        this.background = texture
-        this.backgroundIntensity = .1
-      }
-    )
-
-    const startCallback = (_event: KeyboardEvent|MouseEvent) => {
-      this.eye.show()
-      document.removeEventListener('keyup', startCallback)
-      document.removeEventListener('mousedown', startCallback)
-
-      const player: HTMLAudioElement|null = document.querySelector('#musicPlayer')
-      const dialog: HTMLParagraphElement|null = document.querySelector('#spotted')
-
-      if (player) {
-        player.play()
-        // Skip the slow beginning which leads to confusion weither the audio started or not
-        player.currentTime = 15.7
-      }
-      if (dialog) {
-        dialog.style.setProperty('opacity', '1')
-        setTimeout(() => dialog.style.setProperty('opacity', '0'), 1500)
-      }
-    }
-    document.addEventListener('keyup', startCallback)
-    document.addEventListener('mousedown', startCallback)
+    document.addEventListener('keydown', this.ignitionCallback)
+    document.addEventListener('mousedown', this.ignitionCallback)
   }
 
   public update(): void {
@@ -118,5 +101,27 @@ export class BaradDurScene extends Scene implements Lifecycle {
   public dispose(): void {
     this.eye.dispose()
     this.baradDur.dispose()
+
+    document.removeEventListener('keydown', this.ignitionCallback)
+    document.removeEventListener('mousedown', this.ignitionCallback)
+  }
+
+  private ignitionCallback = (_event: KeyboardEvent|MouseEvent) => {
+    this.eye.show()
+    document.removeEventListener('keydown', this.ignitionCallback)
+    document.removeEventListener('mousedown', this.ignitionCallback)
+
+    const player: HTMLAudioElement|null = document.querySelector('#musicPlayer')
+    const dialog: HTMLParagraphElement|null = document.querySelector('#spotted')
+
+    if (player) {
+      player.play()
+      // Skip the slow beginning which leads to confusion weither the audio started or not
+      player.currentTime = 15.7
+    }
+    if (dialog) {
+      dialog.style.setProperty('opacity', '1')
+      setTimeout(() => dialog.style.setProperty('opacity', '0'), 1500)
+    }
   }
 }
