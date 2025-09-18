@@ -22,7 +22,7 @@ canvas {
   position: absolute;
 }
 
-#spotted {
+.dialog {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -32,9 +32,10 @@ canvas {
   color: darkred;
   text-shadow: 1px 1px 1px black;
   font-family: 'quintessential', serif;
-  font-size: 20vw;
+  font-size: clamp(5vw, 10vw, 18vw);
   opacity: 0;
   margin: 0;
+  padding: 3rem;
   pointer-events: none;
   transition: all .2s ease-in-out;
 }

@@ -112,16 +112,36 @@ export class BaradDurScene extends Scene implements Lifecycle {
     document.removeEventListener('mousedown', this.ignitionCallback)
 
     const player: HTMLAudioElement|null = document.querySelector('#musicPlayer')
-    const dialog: HTMLParagraphElement|null = document.querySelector('#spotted')
 
     if (player) {
       player.play()
       // Skip the slow beginning which leads to confusion weither the audio started or not
       player.currentTime = 15.7
     }
-    if (dialog) {
+
+    const dialogs = document.querySelectorAll('.dialog')
+    if (dialogs) this.startDialogsLoop(dialogs)
+  }
+
+  private startDialogsLoop = (dialogs: NodeListOf<Element>, delayOffset = 0) => {
+    let index = 0
+
+    const showNextDialog = () => {
+      const dialog = dialogs[index] as HTMLParagraphElement
       dialog.style.setProperty('opacity', '1')
-      setTimeout(() => dialog.style.setProperty('opacity', '0'), 1500)
+      setTimeout(() => dialog.style.setProperty('opacity', '0'), 3000)
+      index++
+
+      if (index < dialogs.length) {
+        setTimeout(showNextDialog, 10000)
+      } else {
+        setTimeout(() => {
+          index = 0
+          showNextDialog()
+        }, 10000)
+      }
     }
+
+    setTimeout(showNextDialog, delayOffset)
   }
 }
