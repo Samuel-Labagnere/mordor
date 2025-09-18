@@ -138,7 +138,7 @@ export class TheEye extends Object3D implements Lifecycle {
 
   public update(): void {
     this.eye.material.uniforms.time.value = this.clock.elapsed
-    this.eye.quaternion.rotateTowards(this.camera.quaternion, .05)
+    this.eye.quaternion.rotateTowards(this.camera.quaternion, this.clock.delta * .0033)
   }
 
   public resize(): void {}
