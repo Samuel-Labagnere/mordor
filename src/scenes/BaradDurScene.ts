@@ -15,6 +15,7 @@ import skybox from '~~/assets/textures/overcast_soil_puresky_1k.hdr'
 import { TheEye } from '~/objects/TheEye'
 import { BaradDur } from '~/objects/BaradDur'
 import { RGBELoader } from 'three/examples/jsm/Addons.js'
+import { playThunderLoop } from '~/utils/thunder-player'
 
 export interface BaradDurSceneParameters {
   clock: Clock
@@ -54,6 +55,8 @@ export class BaradDurScene extends Scene implements Lifecycle {
     this.backLight = new DirectionalLight(0x2c2b40, 50.)
     this.backLight.position.set(-10, -22, -10)
     this.backLight.target = this.backLightTarget
+
+    playThunderLoop(this)
 
     this.add(
       this.baradDur,

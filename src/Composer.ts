@@ -8,7 +8,8 @@ import {
   EffectComposer,
   FXAAEffect,
   EffectPass,
-  RenderPass
+  RenderPass,
+  BloomEffect
 } from 'postprocessing'
 
 import type {
@@ -37,6 +38,8 @@ export class Composer extends EffectComposer implements Lifecycle {
   public rainPass?: EffectPass
   public rainingEffect?: RainingEffect
   public rainingPass?: EffectPass
+  public bloomEffect?: BloomEffect
+  public bloomPass?: EffectPass
 
   public get camera(): Camera | undefined {
     return this.renderPass.mainCamera
@@ -65,10 +68,14 @@ export class Composer extends EffectComposer implements Lifecycle {
     this.rainingEffect = new RainingEffect()
     this.rainingPass = new EffectPass(this.camera, this.rainingEffect)
 
+    this.bloomEffect = new BloomEffect({ mipmapBlur: true })
+    this.bloomPass = new EffectPass(this.camera, this.bloomEffect)
+
     this.addPass(this.renderPass)
     this.addPass(this.effectPass)
     this.addPass(this.rainingPass)
     this.addPass(this.rainPass)
+    this.addPass(this.bloomPass)
   }
 
   public update(): void {
