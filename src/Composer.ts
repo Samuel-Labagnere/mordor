@@ -9,7 +9,8 @@ import {
   FXAAEffect,
   EffectPass,
   RenderPass,
-  BloomEffect
+  BloomEffect,
+  SSAOEffect
 } from 'postprocessing'
 
 import type {
@@ -40,6 +41,8 @@ export class Composer extends EffectComposer implements Lifecycle {
   public rainingPass?: EffectPass
   public bloomEffect?: BloomEffect
   public bloomPass?: EffectPass
+  public ssaoEffect?: SSAOEffect
+  public ssaoPass?: EffectPass
 
   public get camera(): Camera | undefined {
     return this.renderPass.mainCamera
@@ -71,11 +74,20 @@ export class Composer extends EffectComposer implements Lifecycle {
     this.bloomEffect = new BloomEffect({ mipmapBlur: true })
     this.bloomPass = new EffectPass(this.camera, this.bloomEffect)
 
+    this.ssaoEffect = new SSAOEffect(this.camera, undefined, {
+      intensity: 1.,
+      samples: 5.,
+      radius: 10.,
+      bias: -.33
+    })
+    this.ssaoPass = new EffectPass(this.camera, this.ssaoEffect)
+
     this.addPass(this.renderPass)
     this.addPass(this.effectPass)
     this.addPass(this.rainingPass)
     this.addPass(this.rainPass)
     this.addPass(this.bloomPass)
+    this.addPass(this.ssaoPass)
   }
 
   public update(): void {
