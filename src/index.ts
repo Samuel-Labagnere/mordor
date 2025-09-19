@@ -3,7 +3,7 @@ import { init } from './utils/starter'
 
 App
   .mount({
-    debug: true,
+    debug: false,
     canvas: document.querySelector('canvas')!
   })
   .then(() => {
