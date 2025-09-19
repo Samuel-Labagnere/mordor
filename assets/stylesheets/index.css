@@ -90,16 +90,19 @@ canvas {
 }
 .landing__title > div {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  align-items: start;
+  gap: 0.125rem;
 }
 .landing__content {
   font-size: clamp(0.8rem, 1.5rem, 2rem);
 }
 .landing__button {
+  display: flex;
+  justify-content: center;
   font-family: 'quintessential', serif;
   font-size: 2rem;
-  padding: 1rem 16rem;
+  padding: 1rem 5rem;
+  width: 66%;
   border: 0.125rem solid white;
   color: white;
   background-color: #101010;
@@ -108,7 +111,7 @@ canvas {
 }
 .landing__button:hover {
   font-size: 2.5rem;
-  padding: .55rem 15.55rem;
+  padding: .55rem 4.55rem;
   border-color: darkred;
   color: black;
   background-color: darkred;
