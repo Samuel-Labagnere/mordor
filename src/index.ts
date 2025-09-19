@@ -1,4 +1,5 @@
 import { App } from '~/App'
+import { init } from './utils/starter'
 
 App
   .mount({
@@ -6,7 +7,5 @@ App
     canvas: document.querySelector('canvas')!
   })
   .then(() => {
-    document.body.classList.add('loaded')
-    const rain: HTMLAudioElement|null = document.querySelector('#ambientRain')
-    rain?.play()
+    init()
   })

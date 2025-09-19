@@ -15,7 +15,7 @@ import skybox from '~~/assets/textures/overcast_soil_puresky_1k.hdr'
 import { TheEye } from '~/objects/TheEye'
 import { BaradDur } from '~/objects/BaradDur'
 import { RGBELoader } from 'three/examples/jsm/Addons.js'
-import { playThunderLoop } from '~/utils/thunder-player'
+import { initThunderLoop } from '~/utils/thunder-player'
 
 export interface BaradDurSceneParameters {
   clock: Clock
@@ -56,7 +56,7 @@ export class BaradDurScene extends Scene implements Lifecycle {
     this.backLight.position.set(-10, -22, -10)
     this.backLight.target = this.backLightTarget
 
-    playThunderLoop(this)
+    initThunderLoop(this)
 
     this.add(
       this.baradDur,
@@ -105,6 +105,8 @@ export class BaradDurScene extends Scene implements Lifecycle {
   }
 
   private ignitionCallback = (_event: KeyboardEvent|MouseEvent) => {
+    if (document.querySelector('#landing')) return
+
     this.eye.show()
     document.removeEventListener('mousedown', this.ignitionCallback)
 

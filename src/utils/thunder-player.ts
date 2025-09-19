@@ -7,16 +7,16 @@ const MAX_DELAY = 5000 // 5 seconds
 
 const thunderSounds = document.querySelectorAll('.thunder') as unknown as HTMLAudioElement[]
 
-function getRandomSound(sounds: HTMLAudioElement[]) {
+function getRandomSound(sounds: HTMLAudioElement[]): HTMLAudioElement {
   const index = Math.floor(Math.random() * sounds.length)
   return sounds[index]
 }
 
-function getRandomDelay(min: number, max: number) {
+function getRandomDelay(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-function thunderIntensity(scene: Scene, from: number, to: number, duration: number) {
+function thunderIntensity(scene: Scene, from: number, to: number, duration: number): Promise<void> {
   return new Promise<void>((resolve) => {
     const start = performance.now()
     
@@ -37,7 +37,7 @@ function thunderIntensity(scene: Scene, from: number, to: number, duration: numb
   })
 }
 
-function oscillation(scene: Scene, min: number, max: number, signal: { stop: boolean }) {
+function oscillation(scene: Scene, min: number, max: number, signal: { stop: boolean }): Promise<void> {
   return new Promise<void>((resolve) => {
     const start = performance.now()
     const amplitude = (max - min) / 2
@@ -64,7 +64,12 @@ function oscillation(scene: Scene, min: number, max: number, signal: { stop: boo
   })
 }
 
-export async function playThunderLoop(scene: Scene) {
+export function initThunderLoop(scene: Scene): void {
+  const btn: HTMLElement|null = document.querySelector('.landing__button')
+  btn?.addEventListener('click', () => playThunderLoop(scene))
+}
+
+async function playThunderLoop(scene: Scene): Promise<void> {
   const sound = getRandomSound(thunderSounds)
   
   sound.play()
