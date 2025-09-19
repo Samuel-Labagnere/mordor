@@ -94,7 +94,14 @@ canvas {
   gap: 0.125rem;
 }
 .landing__content {
+  display: none;
   font-size: clamp(0.8rem, 1.5rem, 2rem);
+  opacity: 0;
+  transition: all 5s ease-in;
+}
+.landing__content.revealed {
+  display: block;
+  opacity: 1;
 }
 .landing__button {
   display: flex;

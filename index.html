@@ -16,30 +16,29 @@
             <h2>Samuel Labagnere</h2>
           </div>
         </div>
+
+        <button class="landing__button landing__button--reveal">Discover</button>
   
-        <div class="landing__content">
-          <p>
-            Deep in the heart of Mordor, the great Tower of Barad Dûr rises, its shadow stretching far across the land.
-            Rumors whisper that the Eye has begun to stir, though none can say for certain.
-            This experience invites you to journey into the realm of Sauron’s dark dominion.
-          </p>
-        
-          <p>
-            Built with the power of Three.js and handmade shaders.
-            Rain falls relentlessly and thunder rumbles in the distance.
-            But beware, for the Eye waits... watching. When it opens, there is no escaping.
-          </p>
-        
-          <p>
-            This project is an experimental exploration into interactive storytelling through 3D visualization and immersive audio.
-            Though light in design, every detail of the tower and its surroundings contributes to the foreboding atmosphere of this forsaken land.
-          </p>
-        </div>
+        <p class="landing__content">
+          Deep in the heart of Mordor, the great Tower of Barad Dûr rises, its shadow stretching far across the land.
+          Rumors whisper that the Eye has begun to stir, though none can say for certain.
+          This experience invites you to journey into the realm of Sauron’s dark dominion.
+          <br><br>
+          Built with the power of Three.js and handmade shaders.
+          Rain falls relentlessly and thunder rumbles in the distance.
+          But beware, for the Eye waits... watching. When it opens, there is no escaping.
+          <br><br>
+          This project is an experimental exploration into interactive storytelling through 3D visualization and immersive audio.
+          Though light in design, every detail of the tower and its surroundings contributes to the foreboding atmosphere of this forsaken land.
+        </p>
   
-        <button class="landing__button">Enter</button>
+        <button class="landing__button landing__button--start">Enter</button>
       </div>
     </section>
     <canvas></canvas>
+    <audio id="landingVoice">
+      <source src="assets/sounds/landing.mp3" type="audio/mp3">
+    </audio>
     <audio id="musicPlayer" loop>
       <source src="assets/sounds/mordor_theme.mp3" type="audio/mp3">
     </audio>
