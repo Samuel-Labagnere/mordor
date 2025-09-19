@@ -53,9 +53,9 @@ export class Controls extends CameraControls implements Lifecycle {
     this.minDistance = 15
     this.maxDistance = 32
     this.minPolarAngle = 0.4
-    this.maxPolarAngle = 2.2
+    this.maxPolarAngle = 2.255
     this.truckSpeed = 0
-    this.setPosition(-1.2, -29.4, 23.7)
+    this.setPosition(-1.2, -29.2, 23.7)
     this.setTarget(0, -10, 0)
   }
 
