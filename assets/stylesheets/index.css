@@ -45,6 +45,7 @@ canvas {
   font-size: clamp(5vw, 10vw, 18vw);
   opacity: 0;
   pointer-events: none;
+  mix-blend-mode: exclusion;
 }
 
 .landing {
@@ -101,9 +102,9 @@ canvas {
   color: white;
   background-color: black;
   transition: all .5s ease-in-out;
+  cursor: pointer !important;
 }
 .landing__button:hover {
-  cursor: pointer;
   font-size: 2.5rem;
   padding: .55rem 15.55rem;
   border-color: darkred;
