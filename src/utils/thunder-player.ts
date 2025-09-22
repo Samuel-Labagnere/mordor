@@ -65,7 +65,7 @@ function oscillation(scene: Scene, min: number, max: number, signal: { stop: boo
 }
 
 export function initThunderLoop(scene: Scene): void {
-  const btn: HTMLElement|null = document.querySelector('.landing__button')
+  const btn: HTMLElement|null = document.querySelector('.landing__button--start')
   btn?.addEventListener('click', () => playThunderLoop(scene))
 }
 
